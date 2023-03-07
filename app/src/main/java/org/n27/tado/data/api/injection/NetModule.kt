@@ -6,7 +6,7 @@ import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
 import org.n27.tado.data.api.TadoApi
-import retrofit2.Retrofit
+import org.n27.tado.data.api.TadoAuth
 import retrofit2.Retrofit.Builder
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
@@ -24,13 +24,17 @@ class NetModule {
 
     @Provides
     @Singleton
-    fun providesRetrofit(okHttpClient: OkHttpClient, moshi: Moshi): Retrofit {
+    fun providesAuth(okHttpClient: OkHttpClient, moshi: Moshi): TadoAuth {
         return Builder().client(okHttpClient).baseUrl("https://auth.tado.com/")
             .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .build()
+            .build().create(TadoAuth::class.java)
     }
 
     @Provides
     @Singleton
-    fun providesApiInterface(retrofit: Retrofit): TadoApi = retrofit.create(TadoApi::class.java)
+    fun providesApi(okHttpClient: OkHttpClient, moshi: Moshi): TadoApi {
+        return Builder().client(okHttpClient).baseUrl("https://my.tado.com/")
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build().create(TadoApi::class.java)
+    }
 }

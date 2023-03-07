@@ -5,13 +5,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import org.n27.tado.R
-import org.n27.tado.data.TadoRepository
+import org.n27.tado.data.api.TadoAuth
 import org.n27.tado.data.api.models.LoginResponse
 import javax.inject.Inject
+import kotlin.Result.Companion.failure
+import kotlin.Result.Companion.success
 
-class LoginViewModel @Inject constructor(private val tadoRepository: TadoRepository) : ViewModel() {
+class LoginViewModel @Inject constructor(private val tadoAuth: TadoAuth) : ViewModel() {
 
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = _loginForm
@@ -20,8 +23,12 @@ class LoginViewModel @Inject constructor(private val tadoRepository: TadoReposit
     val loginResult: LiveData<Result<LoginResponse>> = _loginResult
 
     fun login(username: String, password: String) {
-        viewModelScope.launch {
-            _loginResult.value = tadoRepository.login(username, password)
+        val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+            _loginResult.value = failure(throwable)
+        }
+
+        viewModelScope.launch(exceptionHandler) {
+            _loginResult.value = success(tadoAuth.login(username, password))
         }
     }
 

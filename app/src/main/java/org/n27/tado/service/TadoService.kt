@@ -35,6 +35,11 @@ class TadoService : LifecycleService() {
             val loginResult = result ?: return@Observer
             println(loginResult)
         })
+
+        vm.accountDetails.observe(this, Observer { result ->
+            val accountResult = result ?: return@Observer
+            println(accountResult)
+        })
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -76,8 +81,8 @@ class TadoService : LifecycleService() {
         job?.cancel()
         job = scope.launch {
             while (true) {
-                //vm.login("a", "b")
-                delay(timeMillis = 10000)
+                vm.getAccountDetails(loginResponse?.access_token)
+                delay(timeMillis = 30000)
             }
         }
     }
