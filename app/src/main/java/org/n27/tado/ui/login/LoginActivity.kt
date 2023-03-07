@@ -1,21 +1,19 @@
 package org.n27.tado.ui.login
 
-import android.app.Activity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.annotation.StringRes
-import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.Toast
-import org.n27.tado.databinding.ActivityLoginBinding
-
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import com.google.android.material.snackbar.Snackbar
 import org.n27.tado.R
 import org.n27.tado.TadoApplication
+import org.n27.tado.databinding.ActivityLoginBinding
+import org.n27.tado.ui.common.extensions.hideKeyboard
 import javax.inject.Inject
 
 class LoginActivity : AppCompatActivity() {
@@ -54,16 +52,9 @@ class LoginActivity : AppCompatActivity() {
 
             loading.visibility = View.GONE
 
-            loginResult.onSuccess {
-                updateUiWithUser(it.access_token)
-            }.onFailure {
-                showLoginFailed(it.message)
-            }
-
-            setResult(Activity.RESULT_OK)
-
-            //Complete and destroy login activity once successful
-            finish()
+            loginResult
+                .onSuccess { updateUiWithUser(it.access_token) }
+                .onFailure { showLoginFailed(it.message ?: "Error") }
         })
 
         username.afterTextChanged {
@@ -91,11 +82,12 @@ class LoginActivity : AppCompatActivity() {
                 }
                 false
             }
+        }
 
-            login.setOnClickListener {
-                loading.visibility = View.VISIBLE
-                loginViewModel.login(username.text.toString(), password.text.toString())
-            }
+        login.setOnClickListener {
+            loading.visibility = View.VISIBLE
+            loginViewModel.login(username.text.toString(), password.text.toString())
+            hideKeyboard(it)
         }
     }
 
@@ -109,8 +101,8 @@ class LoginActivity : AppCompatActivity() {
         ).show()
     }
 
-    private fun showLoginFailed(errorString: String?) {
-        Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
+    private fun showLoginFailed(errorString: String) {
+        Snackbar.make(binding.root, errorString, Snackbar.LENGTH_LONG).show()
     }
 }
 

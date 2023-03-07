@@ -5,11 +5,11 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
+import org.n27.tado.data.api.TadoApi
 import retrofit2.Retrofit
 import retrofit2.Retrofit.Builder
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
-import org.n27.tado.data.api.TadoApi
 
 @Module
 class NetModule {

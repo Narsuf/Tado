@@ -1,13 +1,13 @@
 package org.n27.tado.ui.login
 
+import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import android.util.Patterns
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import org.n27.tado.data.LoginRepository
 import org.n27.tado.R
+import org.n27.tado.data.LoginRepository
 import org.n27.tado.data.api.models.LoginResponse
 import javax.inject.Inject
 
