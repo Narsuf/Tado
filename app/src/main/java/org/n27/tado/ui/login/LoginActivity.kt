@@ -1,18 +1,17 @@
 package org.n27.tado.ui.login
 
+import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import com.google.android.material.snackbar.Snackbar
-import org.n27.tado.R
+import org.n27.tado.Constants.LOGIN_RESPONSE
 import org.n27.tado.TadoApplication
+import org.n27.tado.data.api.models.LoginResponse
 import org.n27.tado.databinding.ActivityLoginBinding
+import org.n27.tado.service.TadoService
+import org.n27.tado.ui.common.extensions.afterTextChanged
 import org.n27.tado.ui.common.extensions.hideKeyboard
 import javax.inject.Inject
 
@@ -53,7 +52,7 @@ class LoginActivity : AppCompatActivity() {
             loading.visibility = View.GONE
 
             loginResult
-                .onSuccess { updateUiWithUser(it.access_token) }
+                .onSuccess { startService(it) }
                 .onFailure { showLoginFailed(it.message ?: "Error") }
         })
 
@@ -91,32 +90,15 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateUiWithUser(token: String) {
-        val welcome = getString(R.string.welcome)
-        // TODO : initiate successful logged in experience
-        Toast.makeText(
-            applicationContext,
-            "$welcome $token",
-            Toast.LENGTH_LONG
-        ).show()
+    private fun startService(loginResponse: LoginResponse) {
+        val myIntent = Intent(this, TadoService::class.java)
+        myIntent.putExtra(LOGIN_RESPONSE, loginResponse)
+        startService(myIntent)
     }
 
     private fun showLoginFailed(errorString: String) {
-        Snackbar.make(binding.root, errorString, Snackbar.LENGTH_LONG).show()
+        //Snackbar.make(binding.root, errorString, Snackbar.LENGTH_LONG).show()
+        val myIntent = Intent(this, TadoService::class.java)
+        startService(myIntent)
     }
-}
-
-/**
- * Extension function to simplify setting an afterTextChanged action to EditText components.
- */
-fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
-    this.addTextChangedListener(object : TextWatcher {
-        override fun afterTextChanged(editable: Editable?) {
-            afterTextChanged.invoke(editable.toString())
-        }
-
-        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-
-        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-    })
 }

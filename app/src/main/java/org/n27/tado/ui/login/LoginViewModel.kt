@@ -7,11 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.n27.tado.R
-import org.n27.tado.data.LoginRepository
+import org.n27.tado.data.TadoRepository
 import org.n27.tado.data.api.models.LoginResponse
 import javax.inject.Inject
 
-class LoginViewModel @Inject constructor(private val loginRepository: LoginRepository) : ViewModel() {
+class LoginViewModel @Inject constructor(private val tadoRepository: TadoRepository) : ViewModel() {
 
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = _loginForm
@@ -21,7 +21,7 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
 
     fun login(username: String, password: String) {
         viewModelScope.launch {
-            _loginResult.value = loginRepository.login(username, password)
+            _loginResult.value = tadoRepository.login(username, password)
         }
     }
 

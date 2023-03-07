@@ -12,7 +12,7 @@ import kotlin.Result.Companion.success
  */
 
 @Singleton
-class LoginRepository @Inject constructor(private val tadoApi: TadoApi) {
+class TadoRepository @Inject constructor(private val tadoApi: TadoApi) {
 
     // in-memory cache of the loggedInUser object
     //var loggedInUser: LoginResponse? = null
