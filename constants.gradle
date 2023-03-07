@@ -1,0 +1,6 @@
+project.ext {
+    daggerVersion = '2.43.2'
+    moshiVersion = '1.14.0'
+    retrofitVersion = '2.9.0'
+    okHttpVersion = '4.10.0'
+}
