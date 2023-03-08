@@ -15,6 +15,7 @@ import org.n27.tado.TadoApplication
 import org.n27.tado.data.api.models.LoginResponse
 import org.n27.tado.ui.login.LoginActivity
 import javax.inject.Inject
+import kotlin.math.log
 
 class TadoService : LifecycleService() {
 
@@ -30,11 +31,6 @@ class TadoService : LifecycleService() {
     override fun onCreate() {
         (applicationContext as TadoApplication).appComponent.inject(this)
         super.onCreate()
-
-        vm.loginResult.observe(this, Observer { result ->
-            val loginResult = result ?: return@Observer
-            println(loginResult)
-        })
 
         vm.accountDetails.observe(this, Observer { result ->
             val accountResult = result ?: return@Observer
@@ -80,8 +76,9 @@ class TadoService : LifecycleService() {
     private fun logic() {
         job?.cancel()
         job = scope.launch {
+            vm.turnHeatingOn(loginResponse?.access_token)
+
             while (true) {
-                vm.getAccountDetails(loginResponse?.access_token)
                 delay(timeMillis = 30000)
             }
         }

@@ -10,6 +10,7 @@ import org.n27.tado.data.api.TadoApi
 import org.n27.tado.data.api.TadoAuth
 import org.n27.tado.data.api.models.AccountDetails
 import org.n27.tado.data.api.models.LoginResponse
+import org.n27.tado.data.api.models.Overlay
 import javax.inject.Inject
 import kotlin.Result.Companion.failure
 import kotlin.Result.Companion.success
@@ -35,13 +36,25 @@ class TadoServiceViewModel @Inject constructor(
         }
     }
 
-    fun getAccountDetails(token: String?) {
+    fun turnHeatingOn(token: String?) {
         val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
             _accountDetails.value = failure(throwable)
         }
 
         viewModelScope.launch(exceptionHandler) {
-            _accountDetails.value = success(tadoApi.getAccountDetails("Bearer $token"))
+            val bearerToken = "Bearer $token"
+
+            val accountDetails = tadoApi.getAccountDetails(bearerToken)
+            val zones = tadoApi.getZones(bearerToken, accountDetails.homeId)
+            val zoneState = tadoApi.getZoneState(bearerToken, accountDetails.homeId, zones[0].id)
+
+            val turnOnOrder = Overlay(
+                setting = zoneState.setting.copy(power = "ON"),
+                termination = Overlay.Termination("MANUAL")
+            )
+
+            val sendOrder = tadoApi.sendOrder(bearerToken, accountDetails.homeId, zones[0].id, turnOnOrder)
+            println(sendOrder.toString())
         }
     }
 }

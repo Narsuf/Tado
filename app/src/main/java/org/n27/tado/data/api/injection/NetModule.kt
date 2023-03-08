@@ -33,7 +33,7 @@ class NetModule {
     @Provides
     @Singleton
     fun providesApi(okHttpClient: OkHttpClient, moshi: Moshi): TadoApi {
-        return Builder().client(okHttpClient).baseUrl("https://my.tado.com/")
+        return Builder().client(okHttpClient).baseUrl("https://my.tado.com/api/")
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build().create(TadoApi::class.java)
     }
