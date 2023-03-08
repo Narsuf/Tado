@@ -44,6 +44,11 @@ class TadoService : LifecycleService() {
         return super.onStartCommand(intent, flags, startId)
     }
 
+    override fun onDestroy() {
+        job?.cancel()
+        super.onDestroy()
+    }
+
     private fun startForeground() {
         val notificationIntent = Intent(this, LoginActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, FLAG_IMMUTABLE)
@@ -76,10 +81,11 @@ class TadoService : LifecycleService() {
     private fun logic() {
         job?.cancel()
         job = scope.launch {
-            vm.turnHeatingOn(loginResponse?.access_token)
+            //vm.turnHeatingOn(loginResponse?.access_token)
 
             while (true) {
-                delay(timeMillis = 30000)
+                println("Hello")
+                delay(timeMillis = 3000)
             }
         }
     }

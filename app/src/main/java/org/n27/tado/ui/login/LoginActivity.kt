@@ -21,6 +21,8 @@ class LoginActivity : AppCompatActivity() {
     @Inject lateinit var loginViewModel: LoginViewModel
     private lateinit var binding: ActivityLoginBinding
 
+    private val myIntent by lazy { Intent(this, TadoService::class.java) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         (applicationContext as TadoApplication).appComponent.inject(this)
         super.onCreate(savedInstanceState)
@@ -89,10 +91,11 @@ class LoginActivity : AppCompatActivity() {
             loginViewModel.login(username.text.toString(), password.text.toString())
             hideKeyboard(it)
         }
+
+        binding.stopService.setOnClickListener { stopService(myIntent) }
     }
 
     private fun startService(loginResponse: LoginResponse) {
-        val myIntent = Intent(this, TadoService::class.java)
         myIntent.putExtra(LOGIN_RESPONSE, loginResponse)
         startService(myIntent)
     }
