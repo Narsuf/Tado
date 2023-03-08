@@ -8,9 +8,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import org.n27.tado.data.api.TadoApi
 import org.n27.tado.data.api.TadoAuth
-import org.n27.tado.data.api.models.AccountDetails
-import org.n27.tado.data.api.models.LoginResponse
-import org.n27.tado.data.api.models.Overlay
+import org.n27.tado.data.api.models.*
 import javax.inject.Inject
 import kotlin.Result.Companion.failure
 import kotlin.Result.Companion.success
@@ -49,11 +47,23 @@ class TadoServiceViewModel @Inject constructor(
             val zoneState = tadoApi.getZoneState(bearerToken, accountDetails.homeId, zones[0].id)
 
             val turnOnOrder = Overlay(
-                setting = zoneState.setting.copy(power = "ON"),
+                setting = zoneState.setting.copy(
+                    power = Power.ON,
+                    temperature = Temperature(celsius = 20f),
+                    mode = Mode.HEAT,
+                    fanLevel = FanLevel.LEVEL1
+                ),
                 termination = Overlay.Termination("MANUAL")
             )
 
-            val sendOrder = tadoApi.sendOrder(bearerToken, accountDetails.homeId, zones[0].id, turnOnOrder)
+            val turnOffOrder = Overlay(
+                setting = zoneState.setting.copy(
+                    power = Power.OFF
+                ),
+                termination = Overlay.Termination("MANUAL")
+            )
+
+            val sendOrder = tadoApi.sendOrder(bearerToken, accountDetails.homeId, zones[0].id, turnOffOrder)
             println(sendOrder.toString())
         }
     }

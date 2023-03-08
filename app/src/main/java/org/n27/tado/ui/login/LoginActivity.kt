@@ -6,6 +6,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import com.google.android.material.snackbar.Snackbar
 import org.n27.tado.Constants.LOGIN_RESPONSE
 import org.n27.tado.TadoApplication
 import org.n27.tado.data.api.models.LoginResponse
@@ -97,8 +98,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun showLoginFailed(errorString: String) {
-        //Snackbar.make(binding.root, errorString, Snackbar.LENGTH_LONG).show()
-        val myIntent = Intent(this, TadoService::class.java)
-        startService(myIntent)
+        Snackbar.make(binding.root, errorString, Snackbar.LENGTH_LONG).show()
     }
 }
