@@ -63,7 +63,7 @@ class TadoServiceViewModel @Inject constructor(
                 termination = Overlay.Termination("MANUAL")
             )
 
-            val sendOrder = tadoApi.sendOrder(bearerToken, accountDetails.homeId, zones[0].id, turnOffOrder)
+            val sendOrder = tadoApi.sendOrder(bearerToken, accountDetails.homeId, zones[0].id, turnOnOrder)
             println(sendOrder.toString())
         }
     }
