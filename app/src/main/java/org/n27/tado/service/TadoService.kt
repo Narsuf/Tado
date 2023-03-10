@@ -8,14 +8,17 @@ import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.Observer
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.n27.tado.Constants.LOGIN_RESPONSE
 import org.n27.tado.R
 import org.n27.tado.TadoApplication
 import org.n27.tado.data.api.models.LoginResponse
 import org.n27.tado.ui.login.LoginActivity
 import javax.inject.Inject
-import kotlin.math.log
 
 class TadoService : LifecycleService() {
 

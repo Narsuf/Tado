@@ -8,7 +8,13 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import org.n27.tado.data.api.TadoApi
 import org.n27.tado.data.api.TadoAuth
-import org.n27.tado.data.api.models.*
+import org.n27.tado.data.api.models.AccountDetails
+import org.n27.tado.data.api.models.FanLevel
+import org.n27.tado.data.api.models.LoginResponse
+import org.n27.tado.data.api.models.Mode
+import org.n27.tado.data.api.models.Overlay
+import org.n27.tado.data.api.models.Power
+import org.n27.tado.data.api.models.Temperature
 import javax.inject.Inject
 import kotlin.Result.Companion.failure
 import kotlin.Result.Companion.success

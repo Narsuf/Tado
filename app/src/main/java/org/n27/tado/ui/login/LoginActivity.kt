@@ -3,17 +3,19 @@ package org.n27.tado.ui.login
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.EditorInfo.IME_ACTION_DONE
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
-import org.n27.tado.Constants.LOGIN_RESPONSE
 import org.n27.tado.TadoApplication
-import org.n27.tado.data.api.models.LoginResponse
 import org.n27.tado.databinding.ActivityLoginBinding
 import org.n27.tado.service.TadoService
 import org.n27.tado.ui.common.extensions.afterTextChanged
 import org.n27.tado.ui.common.extensions.hideKeyboard
+import org.n27.tado.ui.login.LoginState.Failure
+import org.n27.tado.ui.login.LoginState.FormDataChanged
+import org.n27.tado.ui.login.LoginState.Idle
+import org.n27.tado.ui.login.LoginState.Success
+import org.n27.tado.ui.main.MainActivity
 import javax.inject.Inject
 
 class LoginActivity : AppCompatActivity() {
@@ -25,40 +27,17 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         (applicationContext as TadoApplication).appComponent.inject(this)
+
         super.onCreate(savedInstanceState)
 
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val username = binding.username
-        val password = binding.password
-        val login = binding.login
-        val loading = binding.loading
+        initObservers()
+        binding.setUpViews()
+    }
 
-        loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
-            val loginState = it ?: return@Observer
-
-            // disable login button unless both username / password is valid
-            login.isEnabled = loginState.isDataValid
-
-            if (loginState.usernameError != null) {
-                username.error = getString(loginState.usernameError)
-            }
-            if (loginState.passwordError != null) {
-                password.error = getString(loginState.passwordError)
-            }
-        })
-
-        loginViewModel.loginResult.observe(this@LoginActivity, Observer { result ->
-            val loginResult = result ?: return@Observer
-
-            loading.visibility = View.GONE
-
-            loginResult
-                .onSuccess { startService(it) }
-                .onFailure { showLoginFailed(it.message ?: "Error") }
-        })
-
+    private fun ActivityLoginBinding.setUpViews() {
         username.afterTextChanged {
             loginViewModel.loginDataChanged(
                 username.text.toString(),
@@ -76,7 +55,7 @@ class LoginActivity : AppCompatActivity() {
 
             setOnEditorActionListener { _, actionId, _ ->
                 when (actionId) {
-                    EditorInfo.IME_ACTION_DONE ->
+                    IME_ACTION_DONE ->
                         loginViewModel.login(
                             username.text.toString(),
                             password.text.toString()
@@ -88,19 +67,39 @@ class LoginActivity : AppCompatActivity() {
 
         login.setOnClickListener {
             loading.visibility = View.VISIBLE
-            loginViewModel.login(username.text.toString(), password.text.toString())
             hideKeyboard(it)
+            loginViewModel.login(username.text.toString(), password.text.toString())
         }
 
-        binding.stopService.setOnClickListener { stopService(myIntent) }
+        //stopServiceButton.setOnClickListener { stopService(myIntent) }
     }
 
-    private fun startService(loginResponse: LoginResponse) {
-        myIntent.putExtra(LOGIN_RESPONSE, loginResponse)
-        startService(myIntent)
+    private fun initObservers() {
+        loginViewModel.viewState.observe(this, ::renderState)
     }
 
-    private fun showLoginFailed(errorString: String) {
-        Snackbar.make(binding.root, errorString, Snackbar.LENGTH_LONG).show()
+    private fun renderState(state: LoginState) = when (state) {
+        Idle -> Unit
+        is FormDataChanged -> formDataChanged(state)
+        is Success -> navigateToMainActivity(state)
+        is Failure -> showLoginFailed(state)
+    }
+
+    private fun formDataChanged(state: FormDataChanged) = with(binding) {
+        login.isEnabled = state.isDataValid
+        if (state.usernameError != null) username.error = getString(state.usernameError)
+        if (state.passwordError != null) password.error = getString(state.passwordError)
+    }
+
+    private fun navigateToMainActivity(state: Success) {
+        binding.loading.visibility = View.GONE
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun showLoginFailed(state: Failure) {
+        binding.loading.visibility = View.GONE
+        Snackbar.make(binding.root, state.error.message ?: "Error", Snackbar.LENGTH_LONG).show()
     }
 }
