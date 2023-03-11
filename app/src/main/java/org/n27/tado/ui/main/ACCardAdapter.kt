@@ -11,14 +11,17 @@ import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import org.n27.tado.R
 import org.n27.tado.data.api.models.Mode
+import org.n27.tado.data.api.models.Setting
 import org.n27.tado.data.api.models.Zone
 import org.n27.tado.data.api.models.ZoneState
 
 typealias OnSwitchClicked = (isEnabled: Boolean) -> Unit
+typealias OnIconClicked = (mode: Mode) -> Unit
 
 class ACCardAdapter(
     private val acs: List<Zone>,
     private val acsDetails: List<ZoneState>,
+    private val onIconClicked: OnIconClicked,
     private val onSwitchClicked: OnSwitchClicked
 ) : RecyclerView.Adapter<ACCardAdapter.MyViewHolder>() {
 
@@ -41,15 +44,21 @@ class ACCardAdapter(
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         val card = holder.card
-        val ac = acsDetails[position].setting
 
-        card.findViewById<ImageView>(R.id.ac_mode_icon).setImageResource(
-            when(ac.mode) {
-                Mode.HEAT -> R.drawable.heat
-                Mode.DRY -> R.drawable.drop
-                else -> R.drawable.cold
+        val ac = acsDetails[position].setting
+        val mode = ac.mode ?: Mode.COOL
+        var modePosition: Int
+
+        card.findViewById<ImageView>(R.id.ac_mode_icon).apply {
+            setImageResource(mode.res)
+
+            setOnClickListener {
+                modePosition = if (mode.ordinal == 2) 0 else mode.ordinal + 1
+                val newMode = Mode.values()[modePosition]
+                onIconClicked(newMode)
+                setImageResource(newMode.res)
             }
-        )
+        }
 
         card.findViewById<TextView>(R.id.ac_name).text = acs[position].name
         card.findViewById<TextView>(R.id.desired_temperature).text = ac.temperature?.celsius?.toString() ?: "Temperature"
@@ -64,5 +73,11 @@ class ACCardAdapter(
 
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = acs.size
+
+    private fun getIconPosition(ac: Setting) = when (ac.mode) {
+        Mode.HEAT -> 2
+        Mode.DRY -> 1
+        else -> 0
+    }
 }
 

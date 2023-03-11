@@ -8,5 +8,4 @@ data class ZoneState(
 ) : Serializable {
 
     data class SensorDataPoints(val insideTemperature: Temperature) : Serializable
-
 }

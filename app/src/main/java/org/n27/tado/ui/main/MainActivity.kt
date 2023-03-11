@@ -13,6 +13,7 @@ import org.n27.tado.Constants.PASSWORD
 import org.n27.tado.Constants.TOKEN
 import org.n27.tado.R
 import org.n27.tado.TadoApplication
+import org.n27.tado.data.api.models.Mode
 import org.n27.tado.databinding.ActivityMainBinding
 import org.n27.tado.ui.login.LoginActivity
 import org.n27.tado.ui.main.MainState.Failure
@@ -56,7 +57,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun paintACs(state: Success) {
         binding.loading.visibility = View.GONE
-        binding.recyclerView.adapter = ACCardAdapter(state.acs, state.acsDetails, ::onSwitchClicked)
+        binding.recyclerView.adapter = ACCardAdapter(state.acs, state.acsDetails, ::onIconClicked, ::onSwitchClicked)
+    }
+
+    private fun onIconClicked(mode: Mode) {
+        Snackbar.make(binding.root, "Mode ${mode.name} selected", Snackbar.LENGTH_LONG).show()
     }
 
     private fun onSwitchClicked(isEnabled: Boolean) {
