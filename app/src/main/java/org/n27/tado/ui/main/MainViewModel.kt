@@ -8,9 +8,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import org.n27.tado.data.api.TadoApi
 import org.n27.tado.data.api.models.ZoneState
-import org.n27.tado.ui.main.MainState.Failure
-import org.n27.tado.ui.main.MainState.Loading
-import org.n27.tado.ui.main.MainState.Success
+import org.n27.tado.ui.main.MainState.*
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(private val tadoApi: TadoApi) : ViewModel() {

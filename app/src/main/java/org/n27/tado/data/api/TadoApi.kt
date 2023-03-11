@@ -4,11 +4,7 @@ import org.n27.tado.data.api.models.AccountDetails
 import org.n27.tado.data.api.models.Overlay
 import org.n27.tado.data.api.models.Zone
 import org.n27.tado.data.api.models.ZoneState
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.PUT
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface TadoApi {
 

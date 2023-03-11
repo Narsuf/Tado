@@ -9,10 +9,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import org.n27.tado.R
 import org.n27.tado.data.api.TadoAuth
-import org.n27.tado.ui.login.LoginState.Failure
-import org.n27.tado.ui.login.LoginState.FormDataChanged
-import org.n27.tado.ui.login.LoginState.Idle
-import org.n27.tado.ui.login.LoginState.Success
+import org.n27.tado.ui.login.LoginState.*
 import javax.inject.Inject
 
 class LoginViewModel @Inject constructor(private val tadoAuth: TadoAuth) : ViewModel() {

@@ -11,17 +11,18 @@ import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import org.n27.tado.R
 import org.n27.tado.data.api.models.Mode
-import org.n27.tado.data.api.models.Setting
 import org.n27.tado.data.api.models.Zone
 import org.n27.tado.data.api.models.ZoneState
 
-typealias OnSwitchClicked = (isEnabled: Boolean) -> Unit
 typealias OnIconClicked = (mode: Mode) -> Unit
+typealias OnTemperatureClicked = () -> Float
+typealias OnSwitchClicked = (isEnabled: Boolean) -> Unit
 
 class ACCardAdapter(
     private val acs: List<Zone>,
     private val acsDetails: List<ZoneState>,
     private val onIconClicked: OnIconClicked,
+    private val onTemperatureClicked: OnTemperatureClicked,
     private val onSwitchClicked: OnSwitchClicked
 ) : RecyclerView.Adapter<ACCardAdapter.MyViewHolder>() {
 
@@ -61,7 +62,15 @@ class ACCardAdapter(
         }
 
         card.findViewById<TextView>(R.id.ac_name).text = acs[position].name
-        card.findViewById<TextView>(R.id.desired_temperature).text = ac.temperature?.celsius?.toString() ?: "Temperature"
+        card.findViewById<TextView>(R.id.desired_temperature).apply {
+            text = ac.temperature?.celsius?.toString() ?: "Temperature"
+
+            setOnClickListener {
+                val temperatureSelected = "${onTemperatureClicked()} º"
+                text = temperatureSelected
+            }
+        }
+
         card.findViewById<SwitchCompat>(R.id.switch_button).setOnClickListener { onSwitchClicked(it.isEnabled) }
 
         if (position == 0) {

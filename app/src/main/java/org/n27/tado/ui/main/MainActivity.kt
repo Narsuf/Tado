@@ -16,9 +16,7 @@ import org.n27.tado.TadoApplication
 import org.n27.tado.data.api.models.Mode
 import org.n27.tado.databinding.ActivityMainBinding
 import org.n27.tado.ui.login.LoginActivity
-import org.n27.tado.ui.main.MainState.Failure
-import org.n27.tado.ui.main.MainState.Loading
-import org.n27.tado.ui.main.MainState.Success
+import org.n27.tado.ui.main.MainState.*
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
@@ -57,11 +55,21 @@ class MainActivity : AppCompatActivity() {
 
     private fun paintACs(state: Success) {
         binding.loading.visibility = View.GONE
-        binding.recyclerView.adapter = ACCardAdapter(state.acs, state.acsDetails, ::onIconClicked, ::onSwitchClicked)
+        binding.recyclerView.adapter = ACCardAdapter(
+            state.acs,
+            state.acsDetails,
+            ::onIconClicked,
+            ::onTemperatureClicked,
+            ::onSwitchClicked
+        )
     }
 
     private fun onIconClicked(mode: Mode) {
         Snackbar.make(binding.root, "Mode ${mode.name} selected", Snackbar.LENGTH_LONG).show()
+    }
+
+    private fun onTemperatureClicked(): Float {
+        return 0f
     }
 
     private fun onSwitchClicked(isEnabled: Boolean) {

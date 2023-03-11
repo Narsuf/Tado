@@ -15,10 +15,7 @@ import org.n27.tado.databinding.ActivityLoginBinding
 import org.n27.tado.service.TadoService
 import org.n27.tado.ui.common.extensions.afterTextChanged
 import org.n27.tado.ui.common.extensions.hideKeyboard
-import org.n27.tado.ui.login.LoginState.Failure
-import org.n27.tado.ui.login.LoginState.FormDataChanged
-import org.n27.tado.ui.login.LoginState.Idle
-import org.n27.tado.ui.login.LoginState.Success
+import org.n27.tado.ui.login.LoginState.*
 import org.n27.tado.ui.main.MainActivity
 import javax.inject.Inject
 
