@@ -47,13 +47,13 @@ class ACCardAdapter(
 
         val ac = acsDetails[position].setting
         val mode = ac.mode ?: Mode.COOL
-        var modePosition: Int
+        var modePosition = mode.ordinal
 
         card.findViewById<ImageView>(R.id.ac_mode_icon).apply {
             setImageResource(mode.res)
 
             setOnClickListener {
-                modePosition = if (mode.ordinal == 2) 0 else mode.ordinal + 1
+                modePosition = if (modePosition == 2) 0 else modePosition + 1
                 val newMode = Mode.values()[modePosition]
                 onIconClicked(newMode)
                 setImageResource(newMode.res)
@@ -73,11 +73,5 @@ class ACCardAdapter(
 
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = acs.size
-
-    private fun getIconPosition(ac: Setting) = when (ac.mode) {
-        Mode.HEAT -> 2
-        Mode.DRY -> 1
-        else -> 0
-    }
 }
 

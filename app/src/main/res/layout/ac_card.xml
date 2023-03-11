@@ -17,12 +17,12 @@
             android:id="@+id/ac_mode_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/default_spacing"
             android:contentDescription="@string/ac_mode"
             android:src="@drawable/cold"
-            android:layout_marginStart="@dimen/default_spacing"
+            card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintStart_toStartOf="parent"
-            card_view:layout_constraintTop_toTopOf="parent"
-            card_view:layout_constraintBottom_toBottomOf="parent"/>
+            card_view:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/ac_name"
@@ -30,32 +30,35 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/default_spacing"
             android:layout_marginTop="@dimen/default_spacing"
-            card_view:layout_constraintTop_toTopOf="parent"
             card_view:layout_constraintBottom_toTopOf="@id/desired_temperature"
-            card_view:layout_constraintStart_toEndOf="@id/ac_mode_icon"
             card_view:layout_constraintEnd_toStartOf="@id/switch_button"
-            tools:text="Living room"/>
+            card_view:layout_constraintStart_toEndOf="@id/ac_mode_icon"
+            card_view:layout_constraintTop_toTopOf="parent"
+            tools:text="Living room" />
 
         <TextView
             android:id="@+id/desired_temperature"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/default_spacing"
             android:layout_marginHorizontal="@dimen/default_spacing"
+            android:layout_marginBottom="@dimen/default_spacing"
             android:textSize="12sp"
-            card_view:layout_constraintTop_toBottomOf="@id/ac_name"
             card_view:layout_constraintBottom_toBottomOf="parent"
-            card_view:layout_constraintStart_toEndOf="@id/ac_mode_icon"
             card_view:layout_constraintEnd_toStartOf="@id/switch_button"
-            tools:text="20º"/>
+            card_view:layout_constraintStart_toEndOf="@id/ac_mode_icon"
+            card_view:layout_constraintTop_toBottomOf="@id/ac_name"
+            tools:text="20º" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switch_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/default_spacing"
+            card_view:thumbTint="@color/switch_thumb_selector"
+            card_view:trackTint="@color/switch_track_selector"
+            card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintEnd_toEndOf="parent"
-            card_view:layout_constraintTop_toTopOf="parent"
-            card_view:layout_constraintBottom_toBottomOf="parent"/>
+            card_view:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>
