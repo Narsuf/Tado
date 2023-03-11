@@ -34,7 +34,6 @@ class LoginActivity : AppCompatActivity() {
         (applicationContext as TadoApplication).appComponent.inject(this)
 
         super.onCreate(savedInstanceState)
-
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -78,7 +77,6 @@ class LoginActivity : AppCompatActivity() {
 
     private fun showLoginFailed(state: Failure) {
         loading(false)
-        binding.loading.visibility = View.GONE
         Snackbar.make(binding.root, state.error.message ?: "Error", Snackbar.LENGTH_LONG).show()
     }
 

@@ -13,4 +13,5 @@
 
     <!-- Main Activity -->
     <string name="logout">Logout</string>
+    <string name="ac_mode">Air conditioning mode</string>
 </resources>
