@@ -116,8 +116,8 @@ class LoginActivity : AppCompatActivity() {
 
     private fun ActivityLoginBinding.loginIfCredentialsSaved() {
         sharedPreferences.getString(USERNAME, null)?.let { usr ->
+            username.setText(usr)
             sharedPreferences.getString(PASSWORD, null)?.let { psw ->
-                username.setText(usr)
                 password.setText(psw)
                 login()
             }
