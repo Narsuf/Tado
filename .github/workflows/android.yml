@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build:
@@ -38,6 +38,7 @@ jobs:
           path: app/build/reports/jacoco/jacocoTestReport
 
       - name: Upload Test Report
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: "app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"

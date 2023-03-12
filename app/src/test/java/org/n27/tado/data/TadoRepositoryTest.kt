@@ -9,13 +9,11 @@ import kotlinx.coroutines.test.setMain
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
+import org.mockito.Mockito.*
 import org.n27.tado.data.api.TadoApi
 import org.n27.tado.data.api.TadoAuth
 import org.n27.tado.data.room.AcConfigDao
-import org.n27.test.generators.getAcConfig
-import org.n27.test.generators.getLoginResponse
+import org.n27.test.generators.*
 import org.robolectric.RobolectricTestRunner
 
 @ExperimentalCoroutinesApi
@@ -38,6 +36,74 @@ class TadoRepositoryTest {
     }
 
     @Test
+    fun login() = runTest {
+        val login = getLoginResponse()
+
+        `when`(authService.login("u", "p")).thenReturn(login)
+
+        assertEquals(repository.login("u", "p"), login)
+    }
+
+    @Test
+    fun getAccountDetailsTest() = runTest {
+        val accountDetails = getAccountDetails()
+
+        `when`(service.getAccountDetails("token")).thenReturn(accountDetails)
+
+        assertEquals(repository.getAccountDetails("token"), accountDetails)
+    }
+
+    @Test
+    fun getZonesTest() = runTest {
+        val zones = getZones()
+
+        `when`(service.getZones("token", 1234)).thenReturn(zones)
+
+        assertEquals(repository.getZones("token", 1234), zones)
+    }
+
+    @Test
+    fun getZoneStatesTest() = runTest {
+        val zoneStates = getZoneStates()
+
+        `when`(service.getZoneState("token", 1234, 0))
+            .thenReturn(getZoneState())
+
+        assertEquals(repository.getZoneStates("token", 1234, getZones()), zoneStates)
+    }
+
+    @Test
+    fun getACsConfigsFromDb() = runTest {
+        val acsConfigs = getACsConfigs()
+
+        `when`(service.getAccountDetails("token")).thenReturn(getAccountDetails())
+        `when`(service.getZones("token", 1234)).thenReturn(getZones())
+        `when`(dao.getAcConfig(0)).thenReturn(getAcConfig())
+
+        assertEquals(repository.getACsConfigs("token"), acsConfigs)
+    }
+
+    @Test
+    fun getACsConfigsRemotely() = runTest {
+        val zoneState = getZoneState()
+        val acsConfigs = getACsConfigs(
+            getAcConfig(
+                mode = zoneState.setting.mode!!,
+                temperature = zoneState.setting.temperature!!.celsius
+            )
+        )
+
+        `when`(service.getAccountDetails("token")).thenReturn(getAccountDetails())
+        `when`(service.getZones("token", 1234)).thenReturn(getZones())
+        `when`(dao.getAcConfig(0)).thenReturn(null)
+        `when`(service.getZoneState("token", 1234, 0))
+            .thenReturn(zoneState)
+
+        assertEquals(repository.getACsConfigs("token"), acsConfigs)
+        verify(dao, times(1)).insertAcConfig(acsConfigs[0])
+    }
+
+    @Test
     fun getConfigFromDb() = runTest {
         val acConfig = getAcConfig()
 
@@ -47,11 +113,30 @@ class TadoRepositoryTest {
     }
 
     @Test
-    fun login() = runTest {
-        val login = getLoginResponse()
+    fun getConfigsFromDb() = runTest {
+        val acsConfigs = getACsConfigs()
 
-        `when`(authService.login("u", "p")).thenReturn(login)
+        `when`(dao.getAcConfigs()).thenReturn(acsConfigs)
 
-        assertEquals(repository.login("u", "p"), login)
+        assertEquals(repository.getConfigsFromDb(), acsConfigs)
+    }
+
+    @Test
+    fun insertConfigIntoDb() = runTest {
+        val acConfig = getAcConfig()
+
+        repository.insertConfigIntoDb(acConfig)
+
+        verify(dao, times(1)).insertAcConfig(acConfig)
+    }
+
+    @Test
+    fun sendOrder() = runTest {
+        val overlay = getOverlay()
+
+        `when`(service.sendOrder("token", 1234, 0 , overlay))
+            .thenReturn(overlay)
+
+        assertEquals(repository.sendOrder("token", 1234, 0, overlay), overlay)
     }
 }

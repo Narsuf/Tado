@@ -24,7 +24,7 @@ class TadoRepository @Inject constructor(
         authService.login(usr, psw)
     }
 
-    internal suspend fun getAcsConfigs(token: String): List<AcConfig> {
+    internal suspend fun getACsConfigs(token: String): List<AcConfig> {
         val accountDetails = getAccountDetails(token)
         val zones = getZones(token, accountDetails.homeId)
 
