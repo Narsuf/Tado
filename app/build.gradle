@@ -2,18 +2,49 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'jacoco'
 }
 
 apply from : '../constants.gradle'
 
+jacoco { toolVersion = '0.8.8' }
+
+tasks.withType(Test) {
+    jacoco.includeNoLocationClasses = true
+    jacoco.excludes = ['jdk.internal.*']
+}
+
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
+
+    reports {
+        xml.enabled(true)
+        html.enabled(true)
+    }
+
+    def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
+    def debugTree = fileTree(
+            dir: "${buildDir}/intermediates/javac/debug/classes",
+            excludes: fileFilter
+    )
+    def kotlinDebugTree = fileTree(dir: "${buildDir}/tmp/kotlin-classes/debug", excludes: fileFilter)
+    def mainSrc = "$project.projectDir/src/main/java"
+
+    sourceDirectories.from = files([mainSrc])
+    classDirectories.from = files([debugTree], [kotlinDebugTree])
+    executionData.from = fileTree(dir: "${buildDir}/outputs", includes: [
+            'unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec',
+            'code_coverage/debugAndroidTest/connected/*/coverage.ec'
+    ])
+}
+
 android {
     namespace 'org.n27.tado'
-    compileSdk 33
+    compileSdk sdkV
 
     defaultConfig {
         applicationId "org.n27.tado"
-        minSdk 26
-        targetSdk 33
+        minSdk minSdkV
+        targetSdk sdkV
         versionCode 1
         versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -24,9 +55,15 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
+        debug { testCoverageEnabled true }
     }
 
     buildFeatures { viewBinding true }
+
+    testOptions {
+        unitTests { includeAndroidResources = true }
+    }
 }
 
 dependencies {
@@ -63,8 +100,13 @@ dependencies {
     // OkHttp
     implementation "com.squareup.okhttp3:okhttp:$okHttpVersion"
 
-    testImplementation 'junit:junit:4.13.2'
+    testImplementation project(":test")
+    testImplementation 'androidx.arch.core:core-testing:2.2.0'
+    testImplementation "org.mockito:mockito-core:4.11.0"
+    testImplementation 'org.robolectric:robolectric:4.9.2'
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4"
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'com.adevinta.android:barista:4.3.0'
 }

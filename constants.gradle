@@ -6,4 +6,7 @@ project.ext {
     roomVersion = '2.5.0'
     lifecycleVersion = '2.6.0'
     lifecycleExtVersion = '2.2.0'
+
+    sdkV = 33
+    minSdkV = 26
 }
