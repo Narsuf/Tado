@@ -12,15 +12,16 @@ import okio.source
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.n27.test.generators.getLoginResponse
+import org.n27.test.generators.getAccountDetails
+import org.n27.test.generators.getZones
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 
-class TadoAuthTest {
+class TadoApiTest {
 
-    private lateinit var service: TadoAuth
+    private lateinit var service: TadoApi
     private lateinit var mockWebServer: MockWebServer
 
     @Before
@@ -35,22 +36,33 @@ class TadoAuthTest {
                     Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
                 )
             )
-            .build().create(TadoAuth::class.java)
+            .build().create(TadoApi::class.java)
     }
 
     @Test
-    fun login() = runBlocking {
-        val login = getLoginResponse()
+    fun getAccountDetailsTest() = runBlocking {
+        val accountDetails = getAccountDetails()
 
-        enqueueResponse()
+        enqueueResponse("account-details.json")
 
-        val response = service.login("u", "p")
+        val response = service.getAccountDetails("token")
 
-        assertEquals(response, login)
+        assertEquals(response, accountDetails)
     }
 
-    private fun enqueueResponse() {
-        val inputStream = javaClass.classLoader!!.getResourceAsStream("login.json")
+    @Test
+    fun getZonesTest() = runBlocking {
+        val zones = getZones()
+
+        enqueueResponse("zones.json")
+
+        val response = service.getZones("token", 1234)
+
+        assertEquals(response, zones)
+    }
+
+    private fun enqueueResponse(resource: String) {
+        val inputStream = javaClass.classLoader!!.getResourceAsStream(resource)
         val source = inputStream.source().buffer()
         val mockResponse = MockResponse()
         mockWebServer.enqueue(mockResponse.setBody(source.readString(StandardCharsets.UTF_8)))

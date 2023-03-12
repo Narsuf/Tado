@@ -9,7 +9,7 @@ fun getAcConfig(
     mode: Mode = Mode.HEAT,
     temperature: Float = 19f
 ) = AcConfig(
-    id = 0,
+    id = 1,
     name = "Bedroom",
     mode = mode,
     temperature = temperature,
