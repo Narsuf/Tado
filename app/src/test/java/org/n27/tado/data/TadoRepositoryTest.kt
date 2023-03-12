@@ -38,20 +38,20 @@ class TadoRepositoryTest {
     }
 
     @Test
-    fun getConfigFromDb() = runTest {
-        val acConfig = getAcConfig()
-
-        `when`(dao.getAcConfig(0)).thenReturn(acConfig)
-
-        assertEquals(repository.getConfigFromDb(0), acConfig)
-    }
-
-    @Test
     fun login() = runTest {
         val login = getLoginResponse()
 
         `when`(authService.login("u", "p")).thenReturn(login)
 
         assertEquals(repository.login("u", "p"), login)
+    }
+
+    @Test
+    fun getConfigFromDb() = runTest {
+        val acConfig = getAcConfig()
+
+        `when`(dao.getAcConfig(0)).thenReturn(acConfig)
+
+        assertEquals(repository.getConfigFromDb(0), acConfig)
     }
 }
