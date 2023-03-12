@@ -14,8 +14,7 @@ import org.mockito.Mockito.`when`
 import org.n27.tado.data.api.TadoApi
 import org.n27.tado.data.api.TadoAuth
 import org.n27.tado.data.room.AcConfigDao
-import org.n27.test.generators.getAcConfig
-import org.n27.test.generators.getLoginResponse
+import org.n27.test.generators.*
 import org.robolectric.RobolectricTestRunner
 
 @ExperimentalCoroutinesApi
@@ -44,6 +43,34 @@ class TadoRepositoryTest {
         `when`(authService.login("u", "p")).thenReturn(login)
 
         assertEquals(repository.login("u", "p"), login)
+    }
+
+    @Test
+    fun getAccountDetailsTest() = runTest {
+        val accountDetails = getAccountDetails()
+
+        `when`(service.getAccountDetails("token")).thenReturn(accountDetails)
+
+        assertEquals(repository.getAccountDetails("token"), accountDetails)
+    }
+
+    @Test
+    fun getZonesTest() = runTest {
+        val zones = getZones()
+
+        `when`(service.getZones("token", 1234)).thenReturn(zones)
+
+        assertEquals(repository.getZones("token", 1234), zones)
+    }
+
+    @Test
+    fun getZoneStatesTest() = runTest {
+        val zoneStates = getZoneStates()
+
+        `when`(service.getZoneState("token", 1234, 0))
+            .thenReturn(zoneStates[0])
+
+        assertEquals(repository.getZoneStates("token", 1234, getZones()), zoneStates)
     }
 
     @Test

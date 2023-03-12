@@ -7,6 +7,6 @@ fun getAcConfig() = AcConfig(
     id = 0,
     name = "Bedroom",
     mode = Mode.HEAT,
-    temperature = 19.0f,
+    temperature = 19f,
     serviceEnabled = false
 )
