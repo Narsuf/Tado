@@ -17,6 +17,7 @@ import org.n27.tado.R
 import org.n27.tado.TadoApplication
 import org.n27.tado.data.api.models.Mode
 import org.n27.tado.databinding.ActivityMainBinding
+import org.n27.tado.service.TadoService
 import org.n27.tado.ui.login.LoginActivity
 import org.n27.tado.ui.main.MainState.*
 import javax.inject.Inject
@@ -26,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     @Inject lateinit var sharedPreferences: SharedPreferences
     @Inject lateinit var vm: MainViewModel
+    private val myIntent by lazy { Intent(this, TadoService::class.java) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         (applicationContext as TadoApplication).appComponent.inject(this)
@@ -50,9 +52,11 @@ class MainActivity : AppCompatActivity() {
     private fun initObservers() { vm.viewState.observe(this, ::renderState) }
 
     private fun renderState(state: MainState) = when (state) {
-        is Loading -> Unit
+        Loading -> Unit
+        ConfigUpdated -> vm.getAcsConfigsFromDb()
         is Success -> paintACs(state)
         is Failure -> showLoginFailed(state)
+        is DbConfigRetrieved -> stopService(state)
     }
 
     private fun paintACs(state: Success) {
@@ -65,10 +69,7 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    private fun onIconClicked(id: Int, mode: Mode) {
-        vm.postConfigChanges(id, mode = mode)
-        Snackbar.make(binding.root, "Mode ${mode.name} selected", Snackbar.LENGTH_LONG).show()
-    }
+    private fun onIconClicked(id: Int, mode: Mode) { vm.postConfigChanges(id, mode = mode) }
 
     private fun onTemperatureClicked(id: Int, callback: OnTemperatureUpdated) {
         val builder = AlertDialog.Builder(this)
@@ -90,12 +91,21 @@ class MainActivity : AppCompatActivity() {
 
     private fun onSwitchClicked(id: Int, isEnabled: Boolean) {
         vm.postConfigChanges(id, serviceEnabled = isEnabled)
-        Snackbar.make(binding.root, "Click", Snackbar.LENGTH_LONG).show()
+
+        if (isEnabled) startService(myIntent)
     }
 
     private fun showLoginFailed(state: Failure) {
         binding.loading.visibility = View.GONE
         Snackbar.make(binding.root, state.error.message ?: "Error", Snackbar.LENGTH_LONG).show()
+    }
+
+    private fun stopService(state: DbConfigRetrieved) {
+        var shouldStopService = true
+
+        state.acsConfigs.forEach { if (it.serviceEnabled) shouldStopService = false }
+
+        if (shouldStopService) stopService(myIntent)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

@@ -32,6 +32,17 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun getAcsConfigsFromDb() {
+        val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+            state.value = Failure(throwable)
+        }
+
+        viewModelScope.launch(exceptionHandler) {
+            val acsConfigs = repository.getConfigsFromDb()
+            state.value = DbConfigRetrieved(acsConfigs)
+        }
+    }
+
     fun postConfigChanges(
         id: Int,
         mode: Mode? = null,
@@ -52,6 +63,8 @@ class MainViewModel @Inject constructor(
                     repository.insertConfigIntoDb(config.copy(serviceEnabled = it))
                 }
             }
+
+            state.value = ConfigUpdated
         }
     }
 }

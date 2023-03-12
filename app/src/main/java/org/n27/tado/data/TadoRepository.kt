@@ -56,6 +56,8 @@ class TadoRepository @Inject constructor(
         dao.getAcConfig(id)
     }
 
+    internal suspend fun getConfigsFromDb() = withContext(Dispatchers.IO) { dao.getAcConfigs() }
+
     internal suspend fun insertConfigIntoDb(acConfig: AcConfig) = withContext(Dispatchers.IO) {
         dao.insertAcConfig(acConfig)
     }

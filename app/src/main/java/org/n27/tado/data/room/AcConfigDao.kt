@@ -1,7 +1,6 @@
 package org.n27.tado.data.room
 
 import androidx.room.*
-import org.n27.tado.data.api.models.Mode
 
 @Dao
 interface AcConfigDao {

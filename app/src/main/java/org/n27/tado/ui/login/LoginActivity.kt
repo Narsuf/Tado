@@ -12,7 +12,6 @@ import org.n27.tado.Constants.TOKEN
 import org.n27.tado.Constants.USERNAME
 import org.n27.tado.TadoApplication
 import org.n27.tado.databinding.ActivityLoginBinding
-import org.n27.tado.service.TadoService
 import org.n27.tado.ui.common.extensions.afterTextChanged
 import org.n27.tado.ui.common.extensions.hideKeyboard
 import org.n27.tado.ui.login.LoginState.*
@@ -24,8 +23,6 @@ class LoginActivity : AppCompatActivity() {
     @Inject lateinit var vm: LoginViewModel
     @Inject lateinit var sharedPreferences: SharedPreferences
     private lateinit var binding: ActivityLoginBinding
-
-    private val myIntent by lazy { Intent(this, TadoService::class.java) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         (applicationContext as TadoApplication).appComponent.inject(this)
@@ -96,8 +93,6 @@ class LoginActivity : AppCompatActivity() {
             hideKeyboard(it)
             login()
         }
-
-        //stopServiceButton.setOnClickListener { stopService(myIntent) }
     }
 
     private fun ActivityLoginBinding.loginDataChanged() {
