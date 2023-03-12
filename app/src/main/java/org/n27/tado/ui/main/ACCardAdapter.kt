@@ -64,7 +64,8 @@ class ACCardAdapter(
 
         card.findViewById<TextView>(R.id.ac_name).text = acs[position].name
         card.findViewById<TextView>(R.id.desired_temperature).apply {
-            text = ac.temperature.toString()
+            val tmp = "${ac.temperature} º"
+            text = tmp
             val temperatureCallback: OnTemperatureUpdated = { text = it }
 
             setOnClickListener { onTemperatureClicked(ac.id, temperatureCallback) }

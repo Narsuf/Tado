@@ -4,13 +4,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
-import org.n27.tado.Constants.OFFSET
+import org.n27.tado.Utils
 import org.n27.tado.data.TadoRepository
-import org.n27.tado.data.api.models.*
+import org.n27.tado.data.api.models.FanLevel
+import org.n27.tado.data.api.models.Overlay
+import org.n27.tado.data.api.models.Temperature
+import org.n27.tado.data.api.models.VerticalSwing
 import javax.inject.Inject
 
 class TadoServiceViewModel @Inject constructor(
-    private val repository: TadoRepository
+    private val repository: TadoRepository,
+    private val utils: Utils
 ) : ViewModel() {
 
     fun manageTemperature(username: String?, password: String?) {
@@ -33,11 +37,15 @@ class TadoServiceViewModel @Inject constructor(
             zoneStates.forEachIndexed { index, zoneState ->
                 val acsConfig = acsConfigs[index]
                 val currentTemperature = zoneState.sensorDataPoints.insideTemperature.celsius
-                val desiredTemperature = acsConfig.temperature
-                val power = getACPowerStatus(
+                val desiredTemperature = utils.getDesiredTemperature(
+                    acsConfig.temperature,
+                    zoneState.setting.mode ?: acsConfig.mode
+                )
+
+                val power = utils.getACPowerStatus(
                     currentTemperature,
                     desiredTemperature,
-                    zoneState.setting.mode,
+                    zoneState.setting.mode ?: acsConfig.mode,
                     zoneState.setting.power
                 )
 
@@ -57,28 +65,6 @@ class TadoServiceViewModel @Inject constructor(
                         repository.sendOrder(token, homeId, zones[index].id, order)
                 }
             }
-        }
-    }
-
-    private fun getACPowerStatus(
-        currentTemperature: Float,
-        desiredTemperature: Float,
-        mode: Mode?,
-        power: Power
-    ): Power? {
-        val tooHot = currentTemperature > desiredTemperature + OFFSET
-        val tooCold = currentTemperature < desiredTemperature - OFFSET
-
-        val overHeated = mode == Mode.HEAT && tooHot
-        val overCooled = mode != Mode.HEAT && tooCold
-
-        val gettingCold = mode == Mode.HEAT && tooCold
-        val gettingHot = mode != Mode.HEAT && tooHot
-
-        return when {
-            overHeated || overCooled -> Power.OFF.takeIf { power == Power.ON }
-            gettingCold || gettingHot -> Power.ON.takeIf { power == Power.OFF }
-            else -> null
         }
     }
 }

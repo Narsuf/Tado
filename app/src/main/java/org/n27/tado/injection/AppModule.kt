@@ -9,6 +9,7 @@ import androidx.security.crypto.EncryptedSharedPreferences.PrefValueEncryptionSc
 import androidx.security.crypto.MasterKey
 import dagger.Module
 import dagger.Provides
+import org.n27.tado.Utils
 import org.n27.tado.data.room.Database
 import javax.inject.Singleton
 
@@ -45,4 +46,8 @@ class AppModule(val app: Application) {
         PrefKeyEncryptionScheme.AES256_SIV,
         PrefValueEncryptionScheme.AES256_GCM
     )
+
+    @Provides
+    @Singleton
+    fun provideUtils() = Utils()
 }
