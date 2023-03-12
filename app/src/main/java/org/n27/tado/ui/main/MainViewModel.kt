@@ -6,17 +6,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
-import org.n27.tado.data.api.TadoApi
-import org.n27.tado.data.api.models.ZoneState
+import org.n27.tado.data.TadoRepository
+import org.n27.tado.data.api.models.Mode
 import org.n27.tado.ui.main.MainState.*
 import javax.inject.Inject
 
-class MainViewModel @Inject constructor(private val tadoApi: TadoApi) : ViewModel() {
+class MainViewModel @Inject constructor(
+    private val repository: TadoRepository
+) : ViewModel() {
 
     private val state = MutableLiveData<MainState>(Loading)
     internal val viewState: LiveData<MainState> = state
 
-    fun getACs(token: String?) {
+    fun getAcsConfigs(token: String?) {
         val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
             state.value = Failure(throwable)
         }
@@ -24,16 +26,32 @@ class MainViewModel @Inject constructor(private val tadoApi: TadoApi) : ViewMode
         viewModelScope.launch(exceptionHandler) {
             val bearerToken = "Bearer $token"
 
-            val accountDetails = tadoApi.getAccountDetails(bearerToken)
-            val zones = tadoApi.getZones(bearerToken, accountDetails.homeId)
+            val acsConfigs = repository.getAcsConfigs(bearerToken)
 
-            val zoneStates = mutableListOf<ZoneState>()
+            state.value = Success(acsConfigs)
+        }
+    }
 
-            zones.forEachIndexed { index, _ ->
-                zoneStates.add(tadoApi.getZoneState(bearerToken, accountDetails.homeId, zones[index].id))
+    fun postConfigChanges(
+        id: Int,
+        mode: Mode? = null,
+        temperature: Float? = null,
+        serviceEnabled: Boolean? = null
+    ) {
+        val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+            state.value = Failure(throwable)
+        }
+
+        viewModelScope.launch(exceptionHandler) {
+            val acConfig = repository.getConfigFromDb(id)
+
+            acConfig?.let { config ->
+                mode?.let { repository.insertConfigIntoDb(config.copy(mode = it)) }
+                temperature?.let { repository.insertConfigIntoDb(config.copy(temperature = it)) }
+                serviceEnabled?.let {
+                    repository.insertConfigIntoDb(config.copy(serviceEnabled = it))
+                }
             }
-
-            state.value = Success(zones, zoneStates)
         }
     }
 }

@@ -15,7 +15,7 @@ android {
         minSdk 26
         targetSdk 33
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -39,6 +39,11 @@ dependencies {
     implementation "androidx.security:security-crypto:1.1.0-alpha05"
 
     // Android Jetpack
+
+        // Room
+        implementation "androidx.room:room-runtime:$roomVersion"
+        implementation "androidx.room:room-ktx:$roomVersion"
+        kapt "androidx.room:room-compiler:$roomVersion"
 
         // Lifecycle
         implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"

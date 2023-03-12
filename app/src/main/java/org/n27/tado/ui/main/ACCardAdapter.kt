@@ -4,23 +4,25 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
 import android.widget.ImageView
+import android.widget.Switch
 import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
 import androidx.cardview.widget.CardView
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.switchmaterial.SwitchMaterial
 import org.n27.tado.R
 import org.n27.tado.data.api.models.Mode
-import org.n27.tado.data.api.models.Zone
-import org.n27.tado.data.api.models.ZoneState
+import org.n27.tado.data.room.AcConfig
 
-typealias OnIconClicked = (mode: Mode) -> Unit
-typealias OnTemperatureClicked = () -> Float
-typealias OnSwitchClicked = (isEnabled: Boolean) -> Unit
+typealias OnIconClicked = (id: Int, mode: Mode) -> Unit
+typealias OnTemperatureClicked = (id: Int, OnTemperatureUpdated) -> Unit
+typealias OnSwitchClicked = (id: Int, isEnabled: Boolean) -> Unit
+
+typealias OnTemperatureUpdated = (String) -> Unit
 
 class ACCardAdapter(
-    private val acs: List<Zone>,
-    private val acsDetails: List<ZoneState>,
+    private val acs: List<AcConfig>,
     private val onIconClicked: OnIconClicked,
     private val onTemperatureClicked: OnTemperatureClicked,
     private val onSwitchClicked: OnSwitchClicked
@@ -46,32 +48,35 @@ class ACCardAdapter(
         // - replace the contents of the view with that element
         val card = holder.card
 
-        val ac = acsDetails[position].setting
-        val mode = ac.mode ?: Mode.COOL
-        var modePosition = mode.ordinal
+        val ac = acs[position]
+        var modePosition = ac.mode.ordinal
 
         card.findViewById<ImageView>(R.id.ac_mode_icon).apply {
-            setImageResource(mode.res)
+            setImageResource(ac.mode.res)
 
             setOnClickListener {
                 modePosition = if (modePosition == 2) 0 else modePosition + 1
                 val newMode = Mode.values()[modePosition]
-                onIconClicked(newMode)
+
+                onIconClicked(ac.id, newMode)
+
                 setImageResource(newMode.res)
             }
         }
 
         card.findViewById<TextView>(R.id.ac_name).text = acs[position].name
         card.findViewById<TextView>(R.id.desired_temperature).apply {
-            text = ac.temperature?.celsius?.toString() ?: "Temperature"
+            text = ac.temperature.toString()
+            val temperatureCallback: OnTemperatureUpdated = { text = it }
 
-            setOnClickListener {
-                val temperatureSelected = "${onTemperatureClicked()} º"
-                text = temperatureSelected
-            }
+            setOnClickListener { onTemperatureClicked(ac.id, temperatureCallback) }
         }
 
-        card.findViewById<SwitchCompat>(R.id.switch_button).setOnClickListener { onSwitchClicked(it.isEnabled) }
+        card.findViewById<SwitchCompat>(R.id.switch_button).apply {
+            isChecked = ac.serviceEnabled
+
+            setOnClickListener { onSwitchClicked(ac.id, (it as SwitchCompat).isChecked) }
+        }
 
         if (position == 0) {
             card.updateLayoutParams<MarginLayoutParams> {

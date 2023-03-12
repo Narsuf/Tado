@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.NumberPicker
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -38,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.title = "Scripts"
 
         val token = intent.extras?.getString(TOKEN)
-        vm.getACs(token)
+        vm.getAcsConfigs(token)
     }
 
     private fun ActivityMainBinding.setUpViews() {
@@ -56,23 +58,38 @@ class MainActivity : AppCompatActivity() {
     private fun paintACs(state: Success) {
         binding.loading.visibility = View.GONE
         binding.recyclerView.adapter = ACCardAdapter(
-            state.acs,
-            state.acsDetails,
+            state.acsConfigs,
             ::onIconClicked,
             ::onTemperatureClicked,
             ::onSwitchClicked
         )
     }
 
-    private fun onIconClicked(mode: Mode) {
+    private fun onIconClicked(id: Int, mode: Mode) {
+        vm.postConfigChanges(id, mode = mode)
         Snackbar.make(binding.root, "Mode ${mode.name} selected", Snackbar.LENGTH_LONG).show()
     }
 
-    private fun onTemperatureClicked(): Float {
-        return 0f
+    private fun onTemperatureClicked(id: Int, callback: OnTemperatureUpdated) {
+        val builder = AlertDialog.Builder(this)
+            .setTitle("Desired temperature")
+
+        val numberPicker = NumberPicker(this).apply {
+            minValue = 16
+            maxValue = 30
+        }
+
+        builder
+            .setView(numberPicker)
+            .setPositiveButton("OK") { _, _ ->
+                val temperature = numberPicker.value.toFloat()
+                vm.postConfigChanges(id, temperature = temperature)
+                callback("$temperature º")
+            }.show()
     }
 
-    private fun onSwitchClicked(isEnabled: Boolean) {
+    private fun onSwitchClicked(id: Int, isEnabled: Boolean) {
+        vm.postConfigChanges(id, serviceEnabled = isEnabled)
         Snackbar.make(binding.root, "Click", Snackbar.LENGTH_LONG).show()
     }
 

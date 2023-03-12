@@ -1,11 +1,10 @@
 package org.n27.tado.ui.main
 
-import org.n27.tado.data.api.models.Zone
-import org.n27.tado.data.api.models.ZoneState
+import org.n27.tado.data.room.AcConfig
 
 sealed class MainState {
 
     object Loading : MainState()
-    data class Success(val acs: List<Zone>, val acsDetails: List<ZoneState>) : MainState()
+    data class Success(val acsConfigs: List<AcConfig>) : MainState()
     data class Failure(val error: Throwable) : MainState()
 }
