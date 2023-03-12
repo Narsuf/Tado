@@ -5,14 +5,14 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
-import androidx.lifecycle.Observer
 import kotlinx.coroutines.*
-import org.n27.tado.Constants.LOGIN_RESPONSE
+import org.n27.tado.Constants.PASSWORD
+import org.n27.tado.Constants.USERNAME
 import org.n27.tado.R
 import org.n27.tado.TadoApplication
-import org.n27.tado.data.api.models.LoginResponse
 import org.n27.tado.ui.login.LoginActivity
 import javax.inject.Inject
 
@@ -24,21 +24,16 @@ class TadoService : LifecycleService() {
     private val scope = CoroutineScope(Dispatchers.Default)
     private var job: Job? = null
 
+    @Inject lateinit var sharedPreferences: SharedPreferences
     @Inject lateinit var vm: TadoServiceViewModel
-    private var loginResponse: LoginResponse? = null
 
     override fun onCreate() {
         (applicationContext as TadoApplication).appComponent.inject(this)
-        super.onCreate()
 
-        vm.accountDetails.observe(this, Observer { result ->
-            val accountResult = result ?: return@Observer
-            println(accountResult)
-        })
+        super.onCreate()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        loginResponse = intent?.extras?.getSerializable(LOGIN_RESPONSE) as? LoginResponse
         startForeground()
         return super.onStartCommand(intent, flags, startId)
     }
@@ -80,11 +75,15 @@ class TadoService : LifecycleService() {
     private fun logic() {
         job?.cancel()
         job = scope.launch {
-            //vm.turnHeatingOn(loginResponse?.access_token)
+            val minutes = 10L
 
             while (true) {
-                println("Hello")
-                delay(timeMillis = 3000)
+                vm.manageTemperature(
+                    sharedPreferences.getString(USERNAME, null),
+                    sharedPreferences.getString(PASSWORD, null)
+                )
+
+                delay(timeMillis = minutes * 60 * 1000)
             }
         }
     }

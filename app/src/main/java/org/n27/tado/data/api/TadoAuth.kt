@@ -8,8 +8,8 @@ interface TadoAuth {
 
     @POST("oauth/token")
     suspend fun login(
-        @Query("username") username: String,
-        @Query("password") password: String,
+        @Query("username") username: String?,
+        @Query("password") password: String?,
         @Query("client_id") clientId: String = "tado-web-app",
         @Query("grant_type") grantType: String = "password",
         @Query("scope") scope: String = "home.user",

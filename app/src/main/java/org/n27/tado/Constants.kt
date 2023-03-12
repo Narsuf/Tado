@@ -7,4 +7,6 @@ object Constants {
     const val USERNAME = "username"
     const val PASSWORD = "password"
     const val TOKEN = "token"
+
+    const val OFFSET = 0.5f
 }

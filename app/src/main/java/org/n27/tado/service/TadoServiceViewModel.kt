@@ -1,70 +1,84 @@
 package org.n27.tado.service
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
-import org.n27.tado.data.api.TadoApi
-import org.n27.tado.data.api.TadoAuth
+import org.n27.tado.Constants.OFFSET
+import org.n27.tado.data.TadoRepository
 import org.n27.tado.data.api.models.*
 import javax.inject.Inject
-import kotlin.Result.Companion.failure
-import kotlin.Result.Companion.success
 
 class TadoServiceViewModel @Inject constructor(
-    private val tadoAuth: TadoAuth,
-    private val tadoApi: TadoApi
+    private val repository: TadoRepository
 ) : ViewModel() {
 
-    private val _loginResult = MutableLiveData<Result<LoginResponse>>()
-    val loginResult: LiveData<Result<LoginResponse>> = _loginResult
-
-    private val _accountDetails = MutableLiveData<Result<AccountDetails>>()
-    val accountDetails: LiveData<Result<AccountDetails>> = _accountDetails
-
-    fun login(username: String, password: String) {
+    fun manageTemperature(username: String?, password: String?) {
         val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-            _loginResult.value = failure(throwable)
+            println(throwable.message)
         }
 
         viewModelScope.launch(exceptionHandler) {
-            _loginResult.value = success(tadoAuth.login(username, password))
+            val login = repository.login(username, password)
+            val token = "Bearer ${login.access_token}"
+
+            val accountDetails = repository.getAccountDetails(token)
+            val homeId = accountDetails.homeId
+
+            val zones = repository.getZones(token, homeId)
+
+            val zoneStates = repository.getZoneStates(token, homeId, zones)
+            val acsConfigs = repository.getConfigsFromDb()
+
+            zoneStates.forEachIndexed { index, zoneState ->
+                val acsConfig = acsConfigs[index]
+                val currentTemperature = zoneState.sensorDataPoints.insideTemperature.celsius
+                val desiredTemperature = acsConfig.temperature
+                val power = getACPowerStatus(
+                    currentTemperature,
+                    desiredTemperature,
+                    zoneState.setting.mode,
+                    zoneState.setting.power
+                )
+
+                power?.let {
+                    val order = Overlay(
+                        setting = zoneState.setting.copy(
+                            power = it,
+                            temperature = Temperature(acsConfig.temperature),
+                            mode = acsConfig.mode,
+                            fanLevel = FanLevel.LEVEL1,
+                            verticalSwing = VerticalSwing.MID
+                        ),
+                        termination = Overlay.Termination("MANUAL")
+                    )
+
+                    if (acsConfig.serviceEnabled)
+                        repository.sendOrder(token, homeId, zones[index].id, order)
+                }
+            }
         }
     }
 
-    fun turnHeatingOn(token: String?) {
-        val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-            _accountDetails.value = failure(throwable)
-        }
+    private fun getACPowerStatus(
+        currentTemperature: Float,
+        desiredTemperature: Float,
+        mode: Mode?,
+        power: Power
+    ): Power? {
+        val tooHot = currentTemperature > desiredTemperature + OFFSET
+        val tooCold = currentTemperature < desiredTemperature - OFFSET
 
-        viewModelScope.launch(exceptionHandler) {
-            val bearerToken = "Bearer $token"
+        val overHeated = mode == Mode.HEAT && tooHot
+        val overCooled = mode != Mode.HEAT && tooCold
 
-            val accountDetails = tadoApi.getAccountDetails(bearerToken)
-            val zones = tadoApi.getZones(bearerToken, accountDetails.homeId)
-            val zoneState = tadoApi.getZoneState(bearerToken, accountDetails.homeId, zones[0].id)
+        val gettingCold = mode == Mode.HEAT && tooCold
+        val gettingHot = mode != Mode.HEAT && tooHot
 
-            val turnOnOrder = Overlay(
-                setting = zoneState.setting.copy(
-                    power = Power.ON,
-                    temperature = Temperature(celsius = 20f),
-                    mode = Mode.HEAT,
-                    fanLevel = FanLevel.LEVEL1
-                ),
-                termination = Overlay.Termination("MANUAL")
-            )
-
-            val turnOffOrder = Overlay(
-                setting = zoneState.setting.copy(
-                    power = Power.OFF
-                ),
-                termination = Overlay.Termination("MANUAL")
-            )
-
-            val sendOrder = tadoApi.sendOrder(bearerToken, accountDetails.homeId, zones[0].id, turnOnOrder)
-            println(sendOrder.toString())
+        return when {
+            overHeated || overCooled -> Power.OFF.takeIf { power == Power.ON }
+            gettingCold || gettingHot -> Power.ON.takeIf { power == Power.OFF }
+            else -> null
         }
     }
 }

@@ -8,11 +8,11 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import org.n27.tado.R
-import org.n27.tado.data.api.TadoAuth
+import org.n27.tado.data.TadoRepository
 import org.n27.tado.ui.login.LoginState.*
 import javax.inject.Inject
 
-class LoginViewModel @Inject constructor(private val tadoAuth: TadoAuth) : ViewModel() {
+class LoginViewModel @Inject constructor(private val repository: TadoRepository) : ViewModel() {
 
     private val state = MutableLiveData<LoginState>(Idle)
     internal val viewState: LiveData<LoginState> = state
@@ -23,7 +23,7 @@ class LoginViewModel @Inject constructor(private val tadoAuth: TadoAuth) : ViewM
         }
 
         viewModelScope.launch(exceptionHandler) {
-            state.value = Success(tadoAuth.login(username, password))
+            state.value = Success(repository.login(username, password))
         }
     }
 
