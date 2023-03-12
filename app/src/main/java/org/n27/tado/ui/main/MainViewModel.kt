@@ -26,7 +26,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch(exceptionHandler) {
             val bearerToken = "Bearer $token"
 
-            val acsConfigs = repository.getAcsConfigs(bearerToken)
+            val acsConfigs = repository.getACsConfigs(bearerToken)
 
             state.value = Success(acsConfigs)
         }

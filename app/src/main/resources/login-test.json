@@ -1,0 +1,8 @@
+{
+  "access_token": "abc",
+  "token_type": "bearer",
+  "refresh_token": "def",
+  "expires_in": 599,
+  "scope": "home.user",
+  "jti": "asdlkjfaoe84tuy8fhjvafoiu4yuto498ho4aryhg"
+}
