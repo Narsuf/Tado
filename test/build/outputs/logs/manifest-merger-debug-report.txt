@@ -1,0 +1,25 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /home/jorge/Workspace/Android/Tado/test/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest16439533453286282787.xml:2:13-83
+INJECTED from /home/jorge/Workspace/Android/Tado/test/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest16439533453286282787.xml:2:13-83
+INJECTED from /home/jorge/Workspace/Android/Tado/test/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest16439533453286282787.xml:2:13-83
+	package
+		INJECTED from /home/jorge/Workspace/Android/Tado/test/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest16439533453286282787.xml
+		ADDED from /home/jorge/Workspace/Android/Tado/test/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest16439533453286282787.xml:2:13-83
+		INJECTED from /home/jorge/Workspace/Android/Tado/test/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest16439533453286282787.xml
+	xmlns:android
+		ADDED from /home/jorge/Workspace/Android/Tado/test/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest16439533453286282787.xml:2:23-81
+uses-sdk
+INJECTED from /home/jorge/Workspace/Android/Tado/test/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest16439533453286282787.xml reason: use-sdk injection requested
+INJECTED from /home/jorge/Workspace/Android/Tado/test/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest16439533453286282787.xml
+INJECTED from /home/jorge/Workspace/Android/Tado/test/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest16439533453286282787.xml
+INJECTED from /home/jorge/Workspace/Android/Tado/test/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest16439533453286282787.xml
+INJECTED from /home/jorge/Workspace/Android/Tado/test/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest16439533453286282787.xml
+	android:targetSdkVersion
+		INJECTED from /home/jorge/Workspace/Android/Tado/test/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest16439533453286282787.xml
+		ADDED from /home/jorge/Workspace/Android/Tado/test/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest16439533453286282787.xml
+		INJECTED from /home/jorge/Workspace/Android/Tado/test/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest16439533453286282787.xml
+	android:minSdkVersion
+		INJECTED from /home/jorge/Workspace/Android/Tado/test/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest16439533453286282787.xml
+		ADDED from /home/jorge/Workspace/Android/Tado/test/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest16439533453286282787.xml
+		INJECTED from /home/jorge/Workspace/Android/Tado/test/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest16439533453286282787.xml

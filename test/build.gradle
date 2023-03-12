@@ -1,0 +1,19 @@
+plugins {
+    id 'com.android.library'
+}
+
+apply from : '../constants.gradle'
+
+android {
+    namespace 'org.n27.test'
+    compileSdk sdkV
+
+    defaultConfig {
+        minSdk minSdkV
+        targetSdk sdkV
+    }
+}
+
+dependencies {
+    compileOnly project(":app")
+}
