@@ -10,9 +10,9 @@ import org.n27.tado.data.api.models.VerticalSwing
 
 fun getSetting() = Setting(
     type = Type.AIR_CONDITIONING,
-    power = Power.OFF,
+    power = Power.ON,
     temperature = getTemperature(),
-    mode = Mode.COOL,
+    mode = Mode.HEAT,
     fanLevel = FanLevel.LEVEL1,
     verticalSwing = VerticalSwing.MID,
     horizontalSwing = HorizontalSwing.AUTO

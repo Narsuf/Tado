@@ -13,6 +13,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.n27.test.generators.getAccountDetails
+import org.n27.test.generators.getZoneState
 import org.n27.test.generators.getZones
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -59,6 +60,17 @@ class TadoApiTest {
         val response = service.getZones("token", 1234)
 
         assertEquals(response, zones)
+    }
+
+    @Test
+    fun getZoneStateTest() = runBlocking {
+        val zoneState = getZoneState()
+
+        enqueueResponse("zone-state.json")
+
+        val response = service.getZoneState("token", 1234, 1)
+
+        assertEquals(response, zoneState)
     }
 
     private fun enqueueResponse(resource: String) {
