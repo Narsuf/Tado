@@ -66,7 +66,7 @@ class TadoRepositoryTest {
     fun getZoneStatesTest() = runTest {
         val zoneStates = getZoneStates()
 
-        `when`(service.getZoneState("token", 1234, 0))
+        `when`(service.getZoneState("token", 1234, 1))
             .thenReturn(getZoneState())
 
         assertEquals(repository.getZoneStates("token", 1234, getZones()), zoneStates)
@@ -78,7 +78,7 @@ class TadoRepositoryTest {
 
         `when`(service.getAccountDetails("token")).thenReturn(getAccountDetails())
         `when`(service.getZones("token", 1234)).thenReturn(getZones())
-        `when`(dao.getAcConfig(0)).thenReturn(getAcConfig())
+        `when`(dao.getAcConfig(1)).thenReturn(getAcConfig())
 
         assertEquals(repository.getACsConfigs("token"), acsConfigs)
     }
@@ -95,8 +95,8 @@ class TadoRepositoryTest {
 
         `when`(service.getAccountDetails("token")).thenReturn(getAccountDetails())
         `when`(service.getZones("token", 1234)).thenReturn(getZones())
-        `when`(dao.getAcConfig(0)).thenReturn(null)
-        `when`(service.getZoneState("token", 1234, 0))
+        `when`(dao.getAcConfig(1)).thenReturn(null)
+        `when`(service.getZoneState("token", 1234, 1))
             .thenReturn(zoneState)
 
         assertEquals(repository.getACsConfigs("token"), acsConfigs)

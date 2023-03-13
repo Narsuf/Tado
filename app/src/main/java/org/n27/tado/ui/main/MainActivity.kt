@@ -19,7 +19,11 @@ import org.n27.tado.data.api.models.Mode
 import org.n27.tado.databinding.ActivityMainBinding
 import org.n27.tado.service.TadoService
 import org.n27.tado.ui.login.LoginActivity
-import org.n27.tado.ui.main.MainState.*
+import org.n27.tado.ui.main.MainState.ConfigUpdated
+import org.n27.tado.ui.main.MainState.DbConfigRetrieved
+import org.n27.tado.ui.main.MainState.Failure
+import org.n27.tado.ui.main.MainState.Loading
+import org.n27.tado.ui.main.MainState.Success
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {

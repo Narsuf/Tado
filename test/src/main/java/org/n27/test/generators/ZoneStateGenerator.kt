@@ -10,5 +10,5 @@ fun getZoneState() = ZoneState(
 )
 
 fun getSensorDataPoints() = ZoneState.SensorDataPoints(
-    insideTemperature = getTemperature()
+    insideTemperature = getTemperature(celsius = 22.56f)
 )

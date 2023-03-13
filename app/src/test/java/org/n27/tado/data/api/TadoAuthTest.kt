@@ -42,15 +42,15 @@ class TadoAuthTest {
     fun login() = runBlocking {
         val login = getLoginResponse()
 
-        enqueueResponse("login-test.json")
+        enqueueResponse()
 
         val response = service.login("u", "p")
 
         assertEquals(response, login)
     }
 
-    private fun enqueueResponse(resource: String) {
-        val inputStream = javaClass.classLoader!!.getResourceAsStream(resource)
+    private fun enqueueResponse() {
+        val inputStream = javaClass.classLoader!!.getResourceAsStream("login.json")
         val source = inputStream.source().buffer()
         val mockResponse = MockResponse()
         mockWebServer.enqueue(mockResponse.setBody(source.readString(StandardCharsets.UTF_8)))

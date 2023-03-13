@@ -1,0 +1,51 @@
+[
+  {
+    "id": 1,
+    "name": "Bedroom",
+    "type": "AIR_CONDITIONING",
+    "dateCreated": "2023-03-06T21:29:14.722Z",
+    "deviceTypes": [
+      "RU01"
+    ],
+    "devices": [
+      {
+        "deviceType": "RU01",
+        "serialNo": "RU1234",
+        "shortSerialNo": "RU1234",
+        "currentFwVersion": "54.8",
+        "connectionState": {
+          "value": true,
+          "timestamp": "2023-03-12T22:05:02.812Z"
+        },
+        "characteristics": {
+          "capabilities": [
+            "INSIDE_TEMPERATURE_MEASUREMENT",
+            "IDENTIFY"
+          ]
+        },
+        "accessPointWiFi": {
+          "ssid": "tado1234"
+        },
+        "commandTableUploadState": "FINISHED",
+        "duties": [
+          "ZONE_UI",
+          "ZONE_DRIVER",
+          "ZONE_LEADER"
+        ]
+      }
+    ],
+    "reportAvailable": false,
+    "showScheduleSetup": false,
+    "supportsDazzle": true,
+    "dazzleEnabled": true,
+    "dazzleMode": {
+      "supported": true,
+      "enabled": true
+    },
+    "openWindowDetection": {
+      "supported": true,
+      "enabled": true,
+      "timeoutInSeconds": 900
+    }
+  }
+]
