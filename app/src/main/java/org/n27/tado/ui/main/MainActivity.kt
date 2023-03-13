@@ -43,8 +43,6 @@ class MainActivity : AppCompatActivity() {
         binding.setUpViews()
         initObservers()
 
-        supportActionBar?.title = "Scripts"
-
         val token = intent.extras?.getString(TOKEN)
         vm.getAcsConfigs(token)
     }
