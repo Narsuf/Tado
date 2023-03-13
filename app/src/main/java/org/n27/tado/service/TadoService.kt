@@ -8,7 +8,11 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.n27.tado.Constants.PASSWORD
 import org.n27.tado.Constants.USERNAME
 import org.n27.tado.R

@@ -2,7 +2,7 @@ package org.n27.tado
 
 import org.n27.tado.data.api.models.Mode
 import org.n27.tado.data.api.models.Power
-import java.util.*
+import java.util.Calendar
 
 class Utils {
 

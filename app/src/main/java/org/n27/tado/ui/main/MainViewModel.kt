@@ -8,7 +8,11 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import org.n27.tado.data.TadoRepository
 import org.n27.tado.data.api.models.Mode
-import org.n27.tado.ui.main.MainState.*
+import org.n27.tado.ui.main.MainState.ConfigUpdated
+import org.n27.tado.ui.main.MainState.DbConfigRetrieved
+import org.n27.tado.ui.main.MainState.Failure
+import org.n27.tado.ui.main.MainState.Loading
+import org.n27.tado.ui.main.MainState.Success
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
