@@ -1,0 +1,20 @@
+{
+  "type": "MANUAL",
+  "setting": {
+    "type": "AIR_CONDITIONING",
+    "power": "ON",
+    "mode": "HEAT",
+    "temperature": {
+      "celsius": 19.00,
+      "fahrenheit": 66.20
+    },
+    "fanLevel": "LEVEL1",
+    "verticalSwing": "MID",
+    "horizontalSwing": "AUTO"
+  },
+  "termination": {
+    "type": "MANUAL",
+    "typeSkillBasedApp": "MANUAL",
+    "projectedExpiry": null
+  }
+}
